@@ -1,12 +1,14 @@
 # Cloud Function Hands-on
 
 ## Pre-requis
-- Configurer le projet GCP par défaut. C'est le projet où nous allons déployer les fonctions.
+### Attention de bien être identifié avec votre compte Wescale
+### Configurer le projet GCP par défaut. C'est le projet où nous allons déployer les fonctions.
+
 ```bash
 gcloud config set project xxxx
 ```
-- Noter que l'ensemble des codes à utiliser se trouve dans **functions/**
-- Pour éviter de rentrer en conflit avec les autres participants merci de prefixer le nom de vos functions avec un identifiant (et joueur le jeux).
+### Noter que l'ensemble des codes à utiliser se trouve dans **functions/**
+### Pour éviter de rentrer en conflit avec les autres participants merci de prefixer le nom de vos functions avec un identifiant (et joueur le jeux).
 Pour avoir ce prefix automatiquement dans le tutoriel l'exporter sous forme d'env variable dans votre session:
 ```bash
 export MY_ID=xxxx
@@ -25,8 +27,7 @@ cd functions/simple-http-function/
 ```
 ### Deployer la fonction
 ```bash
-cd functions/simple-http-function/
-gcloud functions deploy "${MY_ID}"-simple-http --region=europe-west1 \
+gcloud functions deploy "${MY_ID}-simple-http" --region=europe-west1 \
 --runtime python310 --trigger-http --entry-point=handle_request \
 --allow-unauthenticated
 ```
