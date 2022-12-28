@@ -42,7 +42,11 @@ gcloud functions deploy "${MY_ID}-pubsub-function" --region=europe-west1 \
 --runtime python310 --trigger-topic "${MY_ID}-messages"  --entry-point=handle_message 
 ```
 ### Info +:
-La paramètre entry-point permet de spécifier la fonction qui traite le message dans *main.py*.
+A propos de la commande  `gcloud functions deploy`:
+- La paramètre entry-point permet de spécifier la fonction qui traite le message dans *main.py*.
+- Une image docker a été construite avec [Google Cloud's buildpacks](https://cloud.google.com/docs/buildpacks/build-function)
+- Cette construction est réalisée par le service [Cloud Build](https://cloud.google.com/build)
+
 
 ### Vérifier que la fonction est bien déployée:
 Dans la console aller sur la liste des fonctions:
@@ -60,6 +64,43 @@ gcloud pubsub topics publish "${MY_ID}-messages" --message="hello ${MY_ID}"
 ```
 Vous devriez avoir dans les logs le message.
 
+### Cloud Logging
+Vous l'avez peut être remarqué mais les logs générés par les étapes précédentes n'ont pas de niveau de logs; elles sont en *default*.  
+Nous allons modifier la fonction afin d'avoir des logs avec des niveaux différents.   
+
+### Ajout de dépendance python:   
+Ajouter au même niveau que le *main.py* le fichier *requirements.txt* avec la dépendance vers cloud-logging:  
+```
+google-cloud-logging==2.7.0
+```
+### Log avec Cloud Logging:
+Ajouter le code suivant avant la fonction handle_message: 
+```python
+import google.cloud.logging
+import logging
+
+# Init cloud logging
+client = google.cloud.logging.Client()
+client.get_default_handler()
+client.setup_logging()
+```
+et remplacer l'appel à `print` par:   
+```python
+logging.info("mon message")
+```
+Vous pouvez également utiliser ajouter des logs avec des niveaux différents:   
+```python
+logging.warning("my warning")
+logging.error("my error")
+```
+
+### Re-deployer la Cloud Function
+Utiliser la commande que le déploiement initiale.
+
+### Valider que les logs s'affichent comme attendu:
+```bash
+gcloud pubsub topics publish "${MY_ID}-messages" --message="hello logging ${MY_ID} "
+```
 
 ## Cloud-function HTTP  
 L'objectif est de déployer une première fonction HTTP.  
@@ -101,9 +142,6 @@ Vous devriez avoir en retour:
 
 
 ### Info +:
-A propos de la commande  `gcloud functions deploy`:
-- Une image docker a été construite avec [Google Cloud's buildpacks](https://cloud.google.com/docs/buildpacks/build-function)
-- Cette construction est réalisée par le service [Cloud Build](https://cloud.google.com/build)
 - Il est possible de récupérer l'URL avec la commande:
 ```bash
 gcloud functions describe "${MY_ID}-simple-http" --region=europe-west1 --format="value(httpsTrigger.url)"
