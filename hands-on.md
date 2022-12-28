@@ -14,20 +14,21 @@ Pour avoir ce prefix automatiquement dans le tutoriel l'exporter sous forme d'en
 export MY_ID=xxxx
 ```
 ## Cloud-function Pub/Sub
-Pour démarrer une première **Cloud Function**, nous allons  commencer par une fonction qui écoute les messages envoyées dans un topic **Pub/Sub**.  
+Pour démarrer une première **Cloud Function**, nous allons  commencer par une fonction qui écoute les messages envoyés dans un topic Pub/Sub.  
 **Note:**
 - [Pub/sub](https://cloud.google.com/pubsub) est la solution de file de message sur GCP, serverless et global.
 - Pour envoyer des messages dans Pub/sub, il est nécéssaire de créér un topic.
-- L'objectif de cette première partie est d'écouter les messages au format JSON qui sont envoyés dans ce topic.
+- L'objectif de cette première partie est d'écouter les messages  qui sont envoyés dans ce topic et réagir à ces messages.
 
 Nous allons deployer la fonction
-<walkthrough-editor-open-file filePath="cloud-function-hands-on/functions/pubsub-function/main.py">simple-http-function</walkthrough-editor-open-file>
+<walkthrough-editor-open-file filePath="cloud-function-hands-on/functions/pubsub-function/main.py">pubsub-function</walkthrough-editor-open-file>
 
 
 ### Création du topic
 ```bash
 gcloud pubsub topics create "${MY_ID}-messages"
 ```
+Un message vous indiquera que le topic est bien créé.
 
 ### Placer vous dans le dossier de la fonction
 ```bash
@@ -40,6 +41,8 @@ cd functions/pubsub-function/
 gcloud functions deploy "${MY_ID}-pubsub-function" --region=europe-west1 \
 --runtime python310 --trigger-topic "${MY_ID}-messages"  --entry-point=handle_message 
 ```
+### Info +:
+La paramètre entry-point permet de spécifier la fonction qui traite le message dans *main.py*.
 
 ### Vérifier que la fonction est bien déployée:
 Dans la console aller sur la liste des fonctions:
@@ -47,18 +50,18 @@ Dans la console aller sur la liste des fonctions:
 et aller sur la page de votre fonction. Vous pouvez voir notamment:
 - Les metrics
 - La configuration
-- Le topic pub/sub dans trigger
+- Le topic Pub/Sub dans trigger
 - Les logs
 
 ### Tester la fonction
-Pour cela envoyez un message dans le topic:  
+Pour cela envoyez un message dans le topic:
 ```bash
 gcloud pubsub topics publish "${MY_ID}-messages" --message="hello ${MY_ID}"
 ```
 Vous devriez avoir dans les logs le message.
 
 
-## Cloud-function HTTP 
+## Cloud-function HTTP  
 L'objectif est de déployer une première fonction HTTP.  
 Nous allons deployer la fonction
 <walkthrough-editor-open-file filePath="cloud-function-hands-on/functions/simple-http-function/main.py">simple-http-function</walkthrough-editor-open-file>
