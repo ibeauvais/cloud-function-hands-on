@@ -74,7 +74,7 @@ Ajouter au même niveau que le *main.py* le fichier *requirements.txt* avec la d
 google-cloud-logging==2.7.0
 ```
 ### Log avec Cloud Logging:
-Ajouter le code suivant avant la fonction handle_message: 
+Ajouter le code suivant avant la fonction handle_message dans <walkthrough-editor-open-file filePath="cloud-function-hands-on/functions/pubsub-function/main.py">main.py</walkthrough-editor-open-file>: 
 ```python
 import google.cloud.logging
 import logging
@@ -88,7 +88,7 @@ et remplacer l'appel à `print` par:
 ```python
 logging.info("mon message")
 ```
-Vous pouvez également utiliser ajouter des logs avec des niveaux différents:   
+Vous pouvez également ajouter des logs avec des niveaux différents:   
 ```python
 logging.warning("my warning")
 logging.error("my error")
