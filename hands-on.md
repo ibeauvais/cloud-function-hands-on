@@ -95,7 +95,7 @@ logging.error("my error")
 ```
 
 ### Re-deployer la Cloud Function
-Utiliser la commande que le déploiement initiale.
+Utiliser la même commande que le déploiement initiale.
 
 ### Valider que les logs s'affichent comme attendu:
 ```bash
