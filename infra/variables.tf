@@ -16,15 +16,9 @@ variable "project_name" {
   default = "gcfn-handson"
 }
 
-variable "public_cidr" {
+variable "cidr" {
   description = "Subnet CIDR"
   type = string
-  default = "10.1.0.0/16"
-}
-
-variable "private_cidr" {
-  description = "Subnet CIDR"
-  type = string
-  default = "10.2.0.0/16"
+  default = "172.16.0.0/16"
 }
 
