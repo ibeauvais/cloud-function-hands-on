@@ -1,12 +1,3 @@
-locals {
-
-  enabled_services = toset([
-    "cloudbuild.googleapis.com",
-    "cloudfunctions.googleapis.com",
-    "pubsub.googleapis.com",
-  ])
-}
-
 resource "google_project_service" "service_enabled" {
   for_each = local.enabled_services
   service  = each.value
