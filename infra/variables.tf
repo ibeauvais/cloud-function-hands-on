@@ -1,24 +1,24 @@
 variable "GCP_PROJECT_ID" {
   description = "GCP project ID"
-  type = string
-  default = ""
+  type        = string
+  default     = "cloud-function-hands-on"
 }
 
 variable "gcp_region" {
   description = "GCP region"
-  type = string
-  default = "europe-west1"
+  type        = string
+  default     = "europe-west1"
 }
 
 variable "project_name" {
   description = "Project name"
-  type = string
-  default = "gcfn-handson"
+  type        = string
+  default     = "gcfn-handson"
 }
 
 variable "cidr" {
   description = "Subnet CIDR"
-  type = string
-  default = "172.16.0.0/16"
+  type        = string
+  default     = "172.16.0.0/16"
 }
 
