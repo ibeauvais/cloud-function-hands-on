@@ -22,3 +22,9 @@ variable "cidr" {
   default     = "172.16.0.0/16"
 }
 
+variable "connector_cidr" {
+  description = "VPC access connectors CIDR"
+  type        = string
+  default     = "192.168.1.0/28"
+}
+

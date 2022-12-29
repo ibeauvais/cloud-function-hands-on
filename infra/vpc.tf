@@ -15,11 +15,21 @@ resource "google_compute_subnetwork" "subnet" {
   network                  = google_compute_network.vpc.id
 }
 
+resource "google_compute_subnetwork" "vpc_connector" {
+  name                     = "${var.project_name}-connectors"
+  description              = "VPC access connectors subnet"
+  stack_type               = "IPV4_ONLY"
+  private_ip_google_access = true
+  ip_cidr_range            = var.connector_cidr
+  region                   = var.gcp_region
+  network                  = google_compute_network.vpc.id
+}
+
 resource "google_vpc_access_connector" "gcfn_connector" {
-  name         = "${var.project_name}-connector"
+  name         = "${var.project_name}-connectors"
   machine_type = "e2-standard-4"
 
   subnet {
-    name = google_compute_subnetwork.subnet.name
+    name = google_compute_subnetwork.vpc_connector.name
   }
 }

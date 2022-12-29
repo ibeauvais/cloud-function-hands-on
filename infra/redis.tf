@@ -13,6 +13,8 @@ resource "google_service_networking_connection" "private_service_connection" {
 }
 
 resource "google_redis_instance" "redis" {
+  depends_on = [google_service_networking_connection.private_service_connection]
+
   name               = "${var.project_name}-redis"
   display_name       = "Redis instance for the Hands-on"
   redis_version      = "REDIS_4_0"
