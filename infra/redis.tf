@@ -20,7 +20,7 @@ resource "google_redis_instance" "redis" {
   redis_version      = "REDIS_4_0"
   tier               = "BASIC"
   memory_size_gb     = 1
-  #  auth_enabled   = true
+  auth_enabled       = true
   connect_mode       = "PRIVATE_SERVICE_ACCESS"
   authorized_network = google_compute_network.vpc.id
 }
