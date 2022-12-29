@@ -6,6 +6,7 @@ locals {
     "vpcaccess.googleapis.com",
     "servicenetworking.googleapis.com",
     "compute.googleapis.com",
-    "redis.googleapis.com"
+    "redis.googleapis.com",
+    "secretmanager.googleapis.com"
   ])
 }
