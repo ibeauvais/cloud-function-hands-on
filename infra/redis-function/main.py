@@ -1,9 +1,9 @@
 """CFN to fill redis server with payload:
 {"id": "groupID","secret": "randomID"}"""
 import os
+import logging
 import redis
 import google.cloud.logging
-import logging
 from flask import Response
 
 # Init cloud logging
@@ -28,31 +28,32 @@ def handle_request(request):
     """
     GCP_LOGGING_CLT.get_default_handler()
     GCP_LOGGING_CLT.setup_logging()
+
+    if request.method not in ('GET', 'POST'):
+        return Response("Forbidden method", status="403")
+
     if request.method == 'GET':
         if len(request.args) != 0 and 'id' in request.args:
-            secret = ""
             try:
                 if REDIS_CLT.exists(request.args['id']):
                     secret = REDIS_CLT.get(name=request.args['id'])
-            except redis.exceptions as err:
-                logging.error("redis get value error: %s", err)
+                else:
+                    return Response("Not Found", status="404")
+            except Exception as err:
+                logging.error("Redis get value error: %s", err)
             else:
-                if len(secret) != 0:
-                    return Response(secret, status="200")
-        return Response("Request failed", status="400")
+                return Response(f"{secret.decode('utf-8')}\n", status="200")
+        logging.error("Missing arguments in request")
+    else:
+        data: dict = request.get_json()
+        if ('id', 'secret') in data or (len(data['id']), len(data['secret'])) != 0:
+            try:
+                REDIS_CLT.set(name=data['id'],
+                              value=data['secret'])
+            except Exception as err:
+                logging.error("redis set value error: %s", err)
+            else:
+                return Response("Data inserted", status="200")
+        logging.error("Missing key or value in payload")
 
-    if request.method == 'POST':
-        payload_json: dict = request.get_json()
-        if 'id' not in payload_json or 'secret' not in payload_json:
-            logging.error("missing 'id' or 'secret' key in payload")
-            return Response(status="400")
-        if len(payload_json['id']) == 0 or len(payload_json['secret']) == 0:
-            logging.error("'id' or 'secret' has no value in payload")
-            return Response(status="400")
-        try:
-            REDIS_CLT.set(name=payload_json['id'],
-                          value=payload_json['secret'])
-        except redis.exceptions as err:
-            logging.error("redis set value error: %s", err)
-            return Response("Request failed", status="400")
-        return Response("Data inserted", status="200")
+    return Response("Request failed, please see cloud-function logs", status="400")
