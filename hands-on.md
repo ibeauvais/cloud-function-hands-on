@@ -4,13 +4,13 @@
 ## Prérequis
 
  - Vous aurez besoin de votre compte Google Wescale
- - Configurer le projet GCP `cloud-function-hands-on` par défaut. Nous allons l'utiliser pour déployer les fonctions.
+ - Configurer le projet GCP `cloud-function-hands-on` par défaut. Vous allez l'utiliser pour déployer les fonctions.
 
 ```bash
 gcloud config set project cloud-function-hands-on
 ```
 
- - Notez que l'ensemble du code que nous manipulerons se trouvera dans `functions/`
+ - Notez que l'ensemble du code que vous manipulerez se trouvera dans `functions/`
  - Pour faciliter le hands-on, merci de choisir un `ID` alphanumérique. 
 Vous l'utiliserez lors de vos déploiements de function dans le projet `cloud-function-hands-on` afin d'avoir un nom unique
 
@@ -23,14 +23,14 @@ export MY_ID=xxxx
 
 ## Cloud Function Pub/Sub
 
-Pour notre première création de **Cloud Function**, nous allons commencer par une fonction qui écoute les messages envoyés dans un topic Pub/Sub.  
+Pour votre première création de **Cloud Function**, vous allez commencer par une fonction qui écoute les messages envoyés dans un topic Pub/Sub.  
 
 **Note :**
 
 - Pour envoyer des messages de type Pub/Sub, il est nécessaire de créer un topic.
 - L'objectif de cette première partie est d'écouter les messages qui sont envoyés dans ce topic et de réagir à ces messages.
 
-Nous allons deployer la fonction
+Vous allez deployer la fonction
 <walkthrough-editor-open-file filePath="cloud-function-hands-on/functions/pubsub-function/main.py">functions/pubsub-function</walkthrough-editor-open-file>
 
 
@@ -92,8 +92,8 @@ Ensuite consulter les journaux de votre Cloud Function, vous devriez voir votre 
 ## Journalisation Cloud Function
 
 Comme vous l'avez sans doute remarqué, les journaux générés lors des étapes précédentes n'ont pas de niveau : ils sont dans un statut *par défaut*. 
-Nous allons donc modifier notre code Python afin d'utiliser des modules de journalisation et pouvoir remonter les informations sous différents niveaux. 
-Nous allons aussi devoir ajouter les dépendances de ces modules à installer lors du déploiement de la Cloud Function.
+Vous allez donc modifier votre code Python afin d'utiliser des modules de journalisation et pouvoir remonter les informations sous différents niveaux. 
+Vous allez aussi devoir ajouter les dépendances de ces modules à installer lors du déploiement de la Cloud Function.
 
 ### Ajout des dépendances Python
 
@@ -149,8 +149,8 @@ Ensuite consulter les journaux de votre Cloud Function, vous devriez voir votre 
 
 ## Cloud Function HTTP
 
-Notre deuxième objectif est de déployer une fonction qui interagira à une requête HTTP.  
-Nous allons deployer la fonction
+Votre deuxième objectif est de déployer une fonction qui interagira à une requête HTTP.  
+Vous allez deployer la fonction
 <walkthrough-editor-open-file filePath="cloud-function-hands-on/functions/simple-http-function/main.py">simple-http-function</walkthrough-editor-open-file>
 
 ### Déploiement/Redéploiement de la Cloud Function
@@ -187,13 +187,13 @@ et sélectionnez votre fonction `{MY_ID}-simple-http`. Vous verrez notamment :
 
 ### Test de la Cloud Function
 
-Vous pouvez récupérer l'URL de déclenchement par un appel API. Pour plus de simplicité, nous allons l'exporter dans notre environnement :
+Vous pouvez récupérer l'URL de déclenchement par un appel API. Pour plus de simplicité, vous allez l'exporter dans votre environnement :
 
 ```bash
 export URL_SIMPLE_HTTP=$(gcloud functions describe "${MY_ID}-simple-http" --region=europe-west1 --format="value(httpsTrigger.url)")
 ```
 
-Testons notre fonction par un simple appel `curl` :
+Testons votre fonction par un simple appel `curl` :
 
 ```bash
 curl "${URL_SIMPLE_HTTP}?name=blabla"
@@ -206,7 +206,7 @@ Vous devriez avoir en retour `Hello blabla`
 Comme vu précédemment, par l'utilisation du paramètre `allow-unauthenticated`, les appels à la fonction sont publiques, car non authentifiés. 
 Ce paramètre ajoute le rôle `cloudfunctions.invoker` à `allUsers` et permet l'invocation de cette fonction sans authentification. 
 Cette permission se trouve dans l'onglet autorisations de votre Cloud Function. 
-Nous allons voir comment sécuriser l'appel à cette Cloud Function.
+Vous allez voir comment sécuriser l'appel à cette Cloud Function.
 
 ### Suppression du droit publique d'invocation
 
@@ -244,7 +244,7 @@ Vous devez recevoir un retour de la fonction avec une erreur de ce type :
 
 ### Authentification par token
 
-Afin d'authentifier votre requête HTTP, vous devez utiliser un token d'authentification. Pour plus de simplicité, nous allons l'exporter dans notre environnement :
+Afin d'authentifier votre requête HTTP, vous devez utiliser un token d'authentification. Pour plus de simplicité, vous allez l'exporter dans votre environnement :
 
 ```bash
 export MY_TOKEN=$(gcloud auth print-identity-token)
@@ -256,73 +256,106 @@ Et avec `curl`, vous utilisez cette commande :
 curl -H "Authorization: bearer ${MY_TOKEN}"  "${URL_SIMPLE_HTTP}?name=blabla"
 ```
 
-### Info +:
+### Info +
 
-- Vous avez pu appeler votre fonction avec votre identité car la permission `cloudfunctions.functions.invoke` vous a été donné sur le projet du hands-on via le rôle **cloudfunctions.invoker**.
+- Votre appel à fonction avec l'authentification de votre compte a fonctionné car la permission `cloudfunctions.functions.invoke` 
+vous a été accordée sur le projet `cloud-function-hands-on` via le rôle `cloudfunctions.invoker`.
 
 
-## Utilisation de différentes méthodes HTTP:
-La fonction répond à toutes les requêtes avec le même comportement.
+## Les différentes méthodes HTTP
+
+La fonction précédente peut répondre à toutes formes de requêtes HTTP avec un comportement similaire.
 Vous allez modifier la fonction avec <walkthrough-editor-open-file filePath="cloud-function-hands-on/functions/simple-http-function/main.py">l'éditeur</walkthrough-editor-open-file>
 
+### Exercice
 
-### Modifications du code:
-Nous souhaitons que en fonction des requêtes elle ait le comportement suivant:
-- requête GET => Même comportement que actuelement
-- requête POST avec le payload suivant:
+#### Objectif
+
+1. Répondre à une requête `GET` :
+
+- avec ou sans argument, votre fonction vous répond `"OK, method GET"`
+- vous utilisez la méthode `Response` du module `flask`, exemple :
+
+```python
+from flask import Response
+
+Response(response="My message", status="My status_code")
+```
+
+2. Répondre à une requête `POST` :
+
+- vous appelez la fonction avec un *JSON*, tel que :
+
  ```json
 {
   "names": ["name1", "name2"]
 }
 ```
-**Réponse:**
+
+- votre fonction doit vous répondre un *JSON*, tel que :
+
 ```json
 {
   "messages": ["hello name1","hello name2"]
 }
 ```
-- Autres méthodes http => code retour 405
 
-Quelques exemples de code pour vous aider:
+3. Répondre à une autre requête (`PUT`, `DELETE`... etc) :
+
+- votre fonction doit répondre un code d'erreur `405` et la réponse de votre choix.
+
+#### Exemple de code
 
 ```python
 from flask import Response
 
 def handle_request(request):
     if request.method == 'GET':
-        return Response("ok method GET", status=200)
+        return Response(response="OK, method GET", status=200)
 ```
 
 ```python
-from flask import Response
-
 def handle_request(request):
     payload_json:dict=request.get_json()
-    return payload_json["field1"]
+    return payload_json["names"]
 ```
 
-### Re-deploiement
-Vous devez redéployer la fonction HTTP avec la commande deploy mais sans le  paramètre `--allow-unauthenticated`:
-```bash
-gcloud functions deploy "${MY_ID}-simple-http" --region=europe-west1 \
---runtime python310 --trigger-http --entry-point=handle_request
+```python
+def handle_request(request):
+    if request.method not in ('GET', 'POST'):
+        print("Not Good")
 ```
-### Validation:
-On commence par stocker dans une variable l'URL de la Cloud Function:
-```bash
-export TRIGGER_URL=$(gcloud functions describe "${MY_ID}-simple-http" --region=europe-west1 --format="value(httpsTrigger.url)")
-```
+
+**Important :**
+
+Si vous avez des difficultés à écrire votre code, n'hésitez pas à nous solliciter
+
+### Déploiement/Redéploiement de la Cloud Function
+
+Pensez à redéployer votre Cloud Function HTTP via la commande de déploiement mais sans le paramètre `--allow-unauthenticated`
+
+### Test de votre Cloud Function
+
 GET
+
 ```bash
- curl -H "Authorization: bearer $(gcloud auth print-identity-token)" "${TRIGGER_URL}?name=blabla"
+ curl -H "Authorization: bearer ${MY_TOKEN}" "${URL_SIMPLE_HTTP}?name=blabla"
 ```
+
+retour attendu : `OK, method GET`
 
 POST
+
 ```bash
- curl -X POST -H "Content-Type: application/json" -H "Authorization: bearer $(gcloud auth print-identity-token)" "${TRIGGER_URL}" -d '{"names":["name1", "name2"]}'
+ curl -X POST -H "Content-Type: application/json" -H "Authorization: bearer ${MY_TOKEN}" "${URL_SIMPLE_HTTP}" -d '{"names":["Olivier", "Ivan"]}'
 ```
 
-Other (HEAD)
+retour attendu de cet exemple : `{"messages": ["hello Olivier","hello Ivan"]}`
+
+Other (ex : HEAD)
+
 ```bash
- curl --head -H "Authorization: bearer $(gcloud auth print-identity-token)" "${TRIGGER_URL}?name=blabla"
+ curl --head -H "Authorization: bearer ${MY_TOKEN}" "${URL_SIMPLE_HTTP}?name=blabla"
 ```
+
+retour attendu : `"Not Good"` ou votre message personnalisé
