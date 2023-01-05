@@ -11,7 +11,7 @@ gcloud config set project cloud-function-hands-on
 ```
 
  - Notez que l'ensemble du code que vous manipulerez se trouvera dans `functions/`
- - Pour faciliter le hands-on, merci de choisir un `ID` alphanumérique. 
+ - Pour faciliter le hands-on, merci de choisir un `ID` alphanumérique.
 Vous l'utiliserez lors de vos déploiements de function dans le projet `cloud-function-hands-on` afin d'avoir un nom unique
 
 Définissez votre `ID` de projet dans votre environnement :
@@ -23,7 +23,7 @@ export MY_ID=xxxx
 
 ## Cloud Function Pub/Sub
 
-Pour votre première création de **Cloud Function**, vous allez commencer par une fonction qui écoute les messages envoyés dans un topic Pub/Sub.  
+Pour votre première création de **Cloud Function**, vous allez commencer par une fonction qui écoute les messages envoyés dans un topic Pub/Sub.
 
 **Note :**
 
@@ -54,7 +54,7 @@ Déployer la Cloud Function avec cette commande :
 
 ```bash
 gcloud functions deploy "${MY_ID}-pubsub-function" --region=europe-west1 \
---runtime python310 --trigger-topic "${MY_ID}-messages"  --entry-point=handle_message 
+--runtime python310 --trigger-topic "${MY_ID}-messages"  --entry-point=handle_message
 ```
 
 **Important :**
@@ -91,8 +91,8 @@ Ensuite consulter les journaux de votre Cloud Function, vous devriez voir votre 
 
 ## Journalisation Cloud Function
 
-Comme vous l'avez sans doute remarqué, les journaux générés lors des étapes précédentes n'ont pas de niveau : ils sont dans un statut *par défaut*. 
-Vous allez donc modifier votre code Python afin d'utiliser des modules de journalisation et pouvoir remonter les informations sous différents niveaux. 
+Comme vous l'avez sans doute remarqué, les journaux générés lors des étapes précédentes n'ont pas de niveau : ils sont dans un statut *par défaut*.
+Vous allez donc modifier votre code Python afin d'utiliser des modules de journalisation et pouvoir remonter les informations sous différents niveaux.
 Vous allez aussi devoir ajouter les dépendances de ces modules à installer lors du déploiement de la Cloud Function.
 
 ### Ajout des dépendances Python
@@ -149,7 +149,7 @@ Ensuite consulter les journaux de votre Cloud Function, vous devriez voir votre 
 
 ## Cloud Function HTTP
 
-Votre deuxième objectif est de déployer une fonction qui interagira à une requête HTTP.  
+Votre deuxième objectif est de déployer une fonction qui interagira à une requête HTTP.
 Vous allez deployer la fonction
 <walkthrough-editor-open-file filePath="cloud-function-hands-on/functions/simple-http-function/main.py">simple-http-function</walkthrough-editor-open-file>
 
@@ -203,9 +203,9 @@ Vous devriez avoir en retour `Hello blabla`
 
 ## Authentification
 
-Comme vu précédemment, par l'utilisation du paramètre `allow-unauthenticated`, les appels à la fonction sont publiques, car non authentifiés. 
-Ce paramètre ajoute le rôle `cloudfunctions.invoker` à `allUsers` et permet l'invocation de cette fonction sans authentification. 
-Cette permission se trouve dans l'onglet autorisations de votre Cloud Function. 
+Comme vu précédemment, par l'utilisation du paramètre `allow-unauthenticated`, les appels à la fonction sont publiques, car non authentifiés.
+Ce paramètre ajoute le rôle `cloudfunctions.invoker` à `allUsers` et permet l'invocation de cette fonction sans authentification.
+Cette permission se trouve dans l'onglet autorisations de votre Cloud Function.
 Vous allez voir comment sécuriser l'appel à cette Cloud Function.
 
 ### Suppression du droit publique d'invocation
@@ -258,7 +258,7 @@ curl -H "Authorization: bearer ${MY_TOKEN}"  "${URL_SIMPLE_HTTP}?name=blabla"
 
 ### Info +
 
-- Votre appel à fonction avec l'authentification de votre compte a fonctionné car la permission `cloudfunctions.functions.invoke` 
+- Votre appel à fonction avec l'authentification de votre compte a fonctionné car la permission `cloudfunctions.functions.invoke`
 vous a été accordée sur le projet `cloud-function-hands-on` via le rôle `cloudfunctions.invoker`.
 
 
@@ -359,3 +359,131 @@ Other (ex : HEAD)
 ```
 
 retour attendu : `"Not Good"` ou votre message personnalisé
+
+## Cloud Function dans l'écosystème GCP
+
+Vous venez d'apprendre à construire différents types de Cloud Function réagissant directement aux appels reçus.
+Mais les fonctions ont aussi un usage plus étendu et peuvent interagir avec d'autres composants de votre infrastructure GCP,
+situés souvent dans des zones privées.
+
+Vous allez dans ce hands-on interroger une base redis contenant des informations essentielles avec une Cloud Function HTTP.
+
+### Déploiement/Redéploiement de la Cloud Function
+
+Déployez la function <walkthrough-editor-open-file filePath="cloud-function-hands-on/functions/redis-function/main.py">redis-function</walkthrough-editor-open-file>
+
+Placer vous dans le dossier contenant le code de la Cloud Function :
+
+```bash
+cd ../redis-function/
+```
+
+Déployer la Cloud Function avec cette commande :
+
+```bash
+gcloud functions deploy "${MY_ID}-redis-function" --region=europe-west1 \
+--runtime python310 --trigger-http --entry-point=handle_request
+```
+
+### Test de la Cloud Function
+
+Comme vu précédemment, récupérez l'URL de déclenchement par un appel API :
+
+```bash
+export URL_REDIS_HTTP=$(gcloud functions describe "${MY_ID}-redis-function" --region=europe-west1 --format="value(httpsTrigger.url)")
+```
+
+```bash
+curl -H "Authorization: bearer ${MY_TOKEN}"  "${URL_REDIS_HTTP}?id=${MY_ID}"
+```
+
+Vous devriez avoir en retour `Request failed`, ca fonctionne... Wait what ? 😨
+
+Et oui, vous avez suivi les instructions à la lettre sans vous souciez du code !
+Sinon vous auriez vu cette partie non fonctionnelle :
+
+```python
+REDIS_CLIENT = redis.Redis(host="my_redis_server",
+                           port=6379,
+                           password="my_redis_password")
+```
+
+Effectivement, vous devez récupérer les informations `host` et `password` via la fonctionnalité **GCP secret manager**
+
+### Intégration des secrets et des variables d'environnement.
+
+Modifiez le fichier <walkthrough-editor-open-file filePath="cloud-function-hands-on/functions/redis-function/main.py">main.py</walkthrough-editor-open-file>
+
+Ajoutez la récupération de variable d'environnement :
+
+```python
+import os
+
+REDIS_HOST = os.environ.get('REDIS_HOST')
+REDIS_PORT = int(os.environ.get('REDIS_PORT'))
+REDIS_AUTH = os.environ.get('REDIS_PASSWORD')
+```
+
+et modifiez l'appel du client redis :
+
+```python
+REDIS_CLIENT = redis.Redis(host=REDIS_HOST,
+                           port=REDIS_PORT,
+                           password=REDIS_AUTH)
+```
+
+Vous avez défini la récupération des variables d'environnement, vous pouvez maintenant les instancier lors du redéploiement de la fonction
+grâce aux secrets `gcfn-handson-redis-secret` et `gcfn-handson-redis-host`:
+
+```bash
+gcloud functions deploy "${MY_ID}-redis-function" --region=europe-west1 \
+--runtime python310 --trigger-http --entry-point=handle_request \
+--set-env-vars="REDIS_PORT=6379" --set-secrets "REDIS_PASSWORD=gcfn-handson-redis-secret:latest,REDIS_HOST=gcfn-handson-redis-host:latest"
+```
+
+**Notes :**
+
+- le paramètre `set-env-vars` permet d'instancier une ou plusieurs variables d'environnement directement.
+- le paramètre `set-secrets` permet aussi d'instancier ces variables en définissant un ou plusieurs stockages de secret ainsi que leur version respective.
+
+### Test de la Cloud Function
+
+```bash
+curl -H "Authorization: bearer ${MY_TOKEN}"  "${URL_REDIS_HTTP}?id=${MY_ID}"
+```
+
+Vous devriez avoir en retour `Request failed`, ca fonctionne... Wait what ? 😨
+
+Comme souvent avec le serverless, il n'y a pas de notion d'infrastructure avec une Cloud Function. Vous devez l'intégrer dans un VPC afin
+qu'elle puisse communiquer avec des zones privées.
+
+### Intégration dans un VPC
+
+**Notes :**
+ - Nous avons au préalable installer un `VPC access connecteur` pour que vos fonctions puissent s'intégrer à un VPC.
+> Pour plus de [documentation](https://cloud.google.com/vpc/docs/serverless-vpc-access)
+
+Redéployez votre function avec le connecteur VPC `gcfn-handson-connectors` :
+
+```bash
+gcloud functions deploy "${MY_ID}-redis-function" --region=europe-west1 \
+--runtime python310 --trigger-http --entry-point=handle_request \
+--set-secrets "REDIS_PASSWORD=gcfn-handson-redis-secret:latest,REDIS_HOST=gcfn-handson-redis-host:latest" \
+--vpc-connector=gcfn-handson-connectors
+```
+
+Refaite un test avec la commande `curl` :
+
+```bash
+curl -H "Authorization: bearer ${MY_TOKEN}"  "${URL_REDIS_HTTP}?id=${MY_ID}"
+```
+
+Maintenant vous obtenez un `secret`, que se passe-t-il si vous interrogez de nouveau le redis avec ce secret ?...
+
+## Fin de l'aventure !
+
+Mais beaucoup d'autres choses restent à découvrir...
+Merci pour votre participation et rejoignons-nous pour les mots de la fin.
+
+
+
