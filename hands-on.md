@@ -3,7 +3,7 @@
 
 ## Prérequis
 
- - Vous aurez besoin de votre compte Google Wescale
+ - Vous aurez besoin de votre compte Google WeScale
  - Configurer le projet GCP `cloud-function-hands-on` par défaut. Vous allez l'utiliser pour déployer les fonctions.
 
 ```bash
@@ -14,10 +14,10 @@ gcloud config set project cloud-function-hands-on
  - Pour faciliter le hands-on, merci de choisir un `ID` alphanumérique.
 Vous l'utiliserez lors de vos déploiements de function dans le projet `cloud-function-hands-on` afin d'avoir un nom unique
 
-Définissez votre `ID` de projet dans votre environnement :
+Définissez votre `ID` (**alphanumérique en minuscule**) de projet dans votre environnement :
 
 ```bash
-export MY_ID=xxxx
+export MY_ID=$(echo "xxxx" | tr '[:upper:]' '[:lower:]')
 ```
 
 
@@ -368,7 +368,7 @@ situés souvent dans des zones privées.
 
 Vous allez dans ce hands-on interroger une base redis contenant des informations essentielles avec une Cloud Function HTTP.
 
-### Déploiement/Redéploiement de la Cloud Function
+### Déploiement/Redéploiement de la Cloud Function v2
 
 Déployez la function <walkthrough-editor-open-file filePath="cloud-function-hands-on/functions/redis-function/main.py">redis-function</walkthrough-editor-open-file>
 
@@ -388,6 +388,7 @@ gcloud functions deploy "${MY_ID}-redis-function" --region=europe-west1 \
 **Notes :**
 
 - Le paramètre `gen2` permet de déployer une Cloud Function de seconde génération, plus performante.
+- Pour activer la génération 2 de Cloud Function, votre code doit gérer les logs de GCP. En python vous utilisez le module `google-cloud-logging`
 
 ### Test de la Cloud Function
 
@@ -424,9 +425,10 @@ Ajoutez la récupération de variable d'environnement :
 ```python
 import os
 
+#env vars
 REDIS_HOST = os.environ.get('REDIS_HOST')
 REDIS_PORT = int(os.environ.get('REDIS_PORT'))
-REDIS_AUTH = os.environ.get('REDIS_PASSWORD')
+REDIS_PWD = os.environ.get('REDIS_PASSWORD')
 ```
 
 et modifiez l'appel du client redis :
@@ -434,11 +436,11 @@ et modifiez l'appel du client redis :
 ```python
 REDIS_CLIENT = redis.Redis(host=REDIS_HOST,
                            port=REDIS_PORT,
-                           password=REDIS_AUTH)
+                           password=REDIS_PWD)
 ```
 
-Vous avez défini la récupération des variables d'environnement, vous pouvez maintenant les instancier lors du redéploiement de la fonction
-grâce aux secrets `gcfn-handson-redis-secret` et `gcfn-handson-redis-host`:
+Vous avez codé la récupération des variables d'environnement, vous pouvez maintenant les instancier lors du redéploiement de la fonction
+grâce aux secrets `gcfn-handson-redis-secret` et `gcfn-handson-redis-host` ou directement :
 
 ```bash
 gcloud functions deploy "${MY_ID}-redis-function" --region=europe-west1 \
@@ -457,10 +459,10 @@ gcloud functions deploy "${MY_ID}-redis-function" --region=europe-west1 \
 curl -H "Authorization: bearer ${MY_TOKEN}"  "${URL_REDIS_HTTP}?id=${MY_ID}"
 ```
 
-Vous devriez avoir en retour `Request failed`, ca fonctionne... Wait what ? 😨
+Vous devriez avoir en retour `upstream request timeout`, non toujours pas ? 😤
 
 Comme souvent avec le serverless, il n'y a pas de notion d'infrastructure avec une Cloud Function. Vous devez l'intégrer dans un VPC afin
-qu'elle puisse communiquer avec des zones privées.
+qu'elle puisse communiquer avec des zones privées, donc le serveur **redis**.
 
 ### Intégration dans un VPC
 
@@ -472,8 +474,8 @@ Redéployez votre function avec le connecteur VPC `gcfn-handson-connectors` :
 
 ```bash
 gcloud functions deploy "${MY_ID}-redis-function" --region=europe-west1 \
---runtime python310 --trigger-http --entry-point=handle_request \
---set-secrets "REDIS_PASSWORD=gcfn-handson-redis-secret:latest,REDIS_HOST=gcfn-handson-redis-host:latest" \
+--runtime python310 --trigger-http --entry-point=handle_request --gen2 \
+--set-env-vars="REDIS_PORT=6379" --set-secrets "REDIS_PASSWORD=gcfn-handson-redis-secret:latest,REDIS_HOST=gcfn-handson-redis-host:latest" \
 --vpc-connector=gcfn-handson-connectors
 ```
 
@@ -483,7 +485,7 @@ Refaite un test avec la commande `curl` :
 curl -H "Authorization: bearer ${MY_TOKEN}"  "${URL_REDIS_HTTP}?id=${MY_ID}"
 ```
 
-Maintenant vous obtenez un `secret`, que se passe-t-il si vous interrogez de nouveau le redis avec ce secret ?...
+Maintenant vous obtenez un `secret`, que se passe-t-il si vous interrogez de nouveau le redis avec ce `secret` ?...
 
 ## Fin de l'aventure !
 
