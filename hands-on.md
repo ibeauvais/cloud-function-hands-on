@@ -382,15 +382,19 @@ Déployer la Cloud Function avec cette commande :
 
 ```bash
 gcloud functions deploy "${MY_ID}-redis-function" --region=europe-west1 \
---runtime python310 --trigger-http --entry-point=handle_request
+--runtime python310 --trigger-http --entry-point=handle_request --gen2
 ```
+
+**Notes :**
+
+- Le paramètre `gen2` permet de déployer une Cloud Function de seconde génération, plus performante.
 
 ### Test de la Cloud Function
 
-Comme vu précédemment, récupérez l'URL de déclenchement par un appel API :
+Comme vu précédemment, récupérez l'URL de déclenchement par un appel API, mais le format à changer :
 
 ```bash
-export URL_REDIS_HTTP=$(gcloud functions describe "${MY_ID}-redis-function" --region=europe-west1 --format="value(httpsTrigger.url)")
+export URL_REDIS_HTTP=$(gcloud functions describe "${MY_ID}-redis-function" --region=europe-west1 --format="value(serviceConfig.uri)")
 ```
 
 ```bash
@@ -408,7 +412,8 @@ REDIS_CLIENT = redis.Redis(host="my_redis_server",
                            password="my_redis_password")
 ```
 
-Effectivement, vous devez récupérer les informations `host` et `password` via la fonctionnalité **GCP secret manager**
+Effectivement, vous devez récupérer les informations `host`, `port` et `password` via la fonctionnalité **GCP secret manager** ou
+en tant que variable d'environnement instanciée directement.
 
 ### Intégration des secrets et des variables d'environnement.
 
@@ -437,7 +442,7 @@ grâce aux secrets `gcfn-handson-redis-secret` et `gcfn-handson-redis-host`:
 
 ```bash
 gcloud functions deploy "${MY_ID}-redis-function" --region=europe-west1 \
---runtime python310 --trigger-http --entry-point=handle_request \
+--runtime python310 --trigger-http --entry-point=handle_request --gen2 \
 --set-env-vars="REDIS_PORT=6379" --set-secrets "REDIS_PASSWORD=gcfn-handson-redis-secret:latest,REDIS_HOST=gcfn-handson-redis-host:latest"
 ```
 

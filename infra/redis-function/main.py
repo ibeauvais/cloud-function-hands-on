@@ -30,7 +30,7 @@ def handle_request(request):
     GCP_LOGGING_CLT.setup_logging()
 
     if request.method not in ('GET', 'POST'):
-        return Response("Forbidden method", status="403")
+        return Response("Forbidden method\n", status="403")
 
     if request.method == 'GET':
         if len(request.args) != 0 and 'id' in request.args:
@@ -38,7 +38,7 @@ def handle_request(request):
                 if REDIS_CLT.exists(request.args['id']):
                     secret = REDIS_CLT.get(name=request.args['id'])
                 else:
-                    return Response("Not Found", status="404")
+                    return Response("Not Found\n", status="404")
             except Exception as err:
                 logging.error("Redis get value error: %s", err)
             else:
@@ -53,7 +53,7 @@ def handle_request(request):
             except Exception as err:
                 logging.error("redis set value error: %s", err)
             else:
-                return Response("Data inserted", status="200")
+                return Response("Data inserted\n", status="200")
         logging.error("Missing key or value in payload")
 
-    return Response("Request failed, please see cloud-function logs", status="400")
+    return Response("Request failed, please see cloud-function logs\n", status="400")
