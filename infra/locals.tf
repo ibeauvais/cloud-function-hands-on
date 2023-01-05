@@ -7,6 +7,10 @@ locals {
     "servicenetworking.googleapis.com",
     "compute.googleapis.com",
     "redis.googleapis.com",
-    "secretmanager.googleapis.com"
+    "secretmanager.googleapis.com",
+    "artifactregistry.googleapis.com",
+    "run.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
+    "containerregistry.googleapis.com"
   ])
 }
