@@ -269,7 +269,7 @@ Vous allez modifier la fonction avec <walkthrough-editor-open-file filePath="clo
 
 ### Exercice
 
-#### Objectif
+**Objectifs :**
 
 1. Répondre à une requête `GET` :
 
@@ -304,7 +304,7 @@ Response(response="My message", status="My status_code")
 
 - votre fonction doit répondre un code d'erreur `405` et la réponse de votre choix.
 
-#### Exemple de code
+**Exemple de code :**
 
 ```python
 from flask import Response
@@ -459,7 +459,7 @@ gcloud functions deploy "${MY_ID}-redis-function" --region=europe-west1 \
 curl -H "Authorization: bearer ${MY_TOKEN}"  "${URL_REDIS_HTTP}?id=${MY_ID}"
 ```
 
-Vous devriez avoir en retour `upstream request timeout`, non toujours pas ? 😤
+Vous devriez avoir en retour `upstream request timeout`, non toujours pas le bon résultat... 😤
 
 Comme souvent avec le serverless, il n'y a pas de notion d'infrastructure avec une Cloud Function. Vous devez l'intégrer dans un VPC afin
 qu'elle puisse communiquer avec des zones privées, donc le serveur **redis**.
@@ -467,7 +467,9 @@ qu'elle puisse communiquer avec des zones privées, donc le serveur **redis**.
 ### Intégration dans un VPC
 
 **Notes :**
+
  - Nous avons au préalable installer un `VPC access connecteur` pour que vos fonctions puissent s'intégrer à un VPC.
+
 > Pour plus de [documentation](https://cloud.google.com/vpc/docs/serverless-vpc-access)
 
 Redéployez votre function avec le connecteur VPC `gcfn-handson-connectors` :
