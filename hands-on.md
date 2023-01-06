@@ -12,7 +12,7 @@ gcloud config set project cloud-function-hands-on
 
 - Notez que l'ensemble du code que vous manipulerez se trouvera dans `functions/`
 - Pour faciliter le hands-on, merci de choisir un `ID` alphanumérique.
-  Vous l'utiliserez lors de vos déploiements de function dans le projet `cloud-function-hands-on` afin d'avoir un nom unique
+Vous l'utiliserez lors de vos déploiements de function dans le projet `cloud-function-hands-on` afin d'avoir un nom unique
 
 Définissez votre `ID` (**alphanumérique en minuscule**) de projet dans votre environnement :
 
@@ -20,6 +20,7 @@ Définissez votre `ID` (**alphanumérique en minuscule**) de projet dans votre e
 export MY_ID=$(echo "xxxx" | tr '[:upper:]' '[:lower:]')
 ```
 
+- Veuillez inscrire votre `ID` sur ce [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1abBw26Bo_2IflzBB3QFtEVn4fcqFhpqQtSjMgC95y6U/edit?usp=sharing)
 
 ## Cloud Function Pub/Sub
 
