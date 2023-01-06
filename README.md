@@ -1,7 +1,7 @@
 # cloud-function-hands-on
 Cloud function Hands-on tutorial
 
-##Démarrage: 
+## Démarrage: 
 Pour démarrer le hands-on, 2 solutions: 
 - Cliquer sur le lien ci dessous:  
 
