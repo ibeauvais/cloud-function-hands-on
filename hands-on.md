@@ -3,16 +3,16 @@
 
 ## Prérequis
 
- - Vous aurez besoin de votre compte Google WeScale
- - Configurer le projet GCP `cloud-function-hands-on` par défaut. Vous allez l'utiliser pour déployer les fonctions.
+- Vous aurez besoin de votre compte Google WeScale
+- Configurer le projet GCP `cloud-function-hands-on` par défaut. Vous allez l'utiliser pour déployer les fonctions.
 
 ```bash
 gcloud config set project cloud-function-hands-on
 ```
 
- - Notez que l'ensemble du code que vous manipulerez se trouvera dans `functions/`
- - Pour faciliter le hands-on, merci de choisir un `ID` alphanumérique.
-Vous l'utiliserez lors de vos déploiements de function dans le projet `cloud-function-hands-on` afin d'avoir un nom unique
+- Notez que l'ensemble du code que vous manipulerez se trouvera dans `functions/`
+- Pour faciliter le hands-on, merci de choisir un `ID` alphanumérique.
+  Vous l'utiliserez lors de vos déploiements de function dans le projet `cloud-function-hands-on` afin d'avoir un nom unique
 
 Définissez votre `ID` (**alphanumérique en minuscule**) de projet dans votre environnement :
 
@@ -70,7 +70,7 @@ A propos de cette commande  `gcloud functions deploy`:
 
 ### Vérification de la Cloud Function
 
-Dans la console, consultez sur la liste des [Cloud Functions](https://console.cloud.google.com/functions/list)
+Dans la console, consultez sur la liste des fonctions: [](https://console.cloud.google.com/functions/list)
 et sélectionnez votre fonction `{MY_ID}-pubsub-function`. Vous verrez notamment :
 
 - Les métriques
@@ -101,7 +101,7 @@ En Python, pour centraliser les dépendances d'un project, il est recommandé d'
 
 >Pour plus de [documentation](https://cloud.google.com/functions/docs/writing/specifying-dependencies-python?hl=fr).
 
-Vous devez le créer au même niveau que le fichier `main.py` de votre Cloud Function et y inscrire les dépendances souhaitées :
+A l'aide de l'éditeur cloud-shell, vous devez le créer au même niveau que le fichier <walkthrough-editor-open-file filePath="cloud-function-hands-on/functions/pubsub-function/main.py">main.py</walkthrough-editor-open-file> de votre Cloud Function et y inscrire les dépendances souhaitées :
 
 ```
 google-cloud-logging==2.7.0
@@ -192,7 +192,10 @@ Vous pouvez récupérer l'URL de déclenchement par un appel API. Pour plus de s
 ```bash
 export URL_SIMPLE_HTTP=$(gcloud functions describe "${MY_ID}-simple-http" --region=europe-west1 --format="value(httpsTrigger.url)")
 ```
-
+Cette URL a un format particulier qui dépend du projet GCP, de la région et du nom de la fonction:
+```bash
+echo $URL_SIMPLE_HTTP
+```
 Testons votre fonction par un simple appel `curl` :
 
 ```bash
@@ -258,8 +261,9 @@ curl -H "Authorization: bearer ${MY_TOKEN}"  "${URL_SIMPLE_HTTP}?name=blabla"
 
 ### Info +
 
+- Ce token d'authentification a une durée de validité de 1H
 - Votre appel à fonction avec l'authentification de votre compte a fonctionné car la permission `cloudfunctions.functions.invoke`
-vous a été accordée sur le projet `cloud-function-hands-on` via le rôle `cloudfunctions.invoker`.
+  vous a été accordée sur le projet `cloud-function-hands-on` via le rôle `cloudfunctions.invoker`.
 
 
 ## Les différentes méthodes HTTP
@@ -279,7 +283,7 @@ Vous allez modifier la fonction avec <walkthrough-editor-open-file filePath="clo
 ```python
 from flask import Response
 
-Response(response="My message", status="My status_code")
+Response(response="My message", status=201) # 201 HTTP status code 'Created'
 ```
 
 2. Répondre à une requête `POST` :
@@ -388,7 +392,7 @@ gcloud functions deploy "${MY_ID}-redis-function" --region=europe-west1 \
 **Notes :**
 
 - Le paramètre `gen2` permet de déployer une Cloud Function de seconde génération, plus performante.
-- Pour activer la génération 2 de Cloud Function, votre code doit gérer les logs de GCP. En python vous utilisez le module `google-cloud-logging`
+
 
 ### Test de la Cloud Function
 
@@ -468,7 +472,7 @@ qu'elle puisse communiquer avec des zones privées, donc le serveur **redis**.
 
 **Notes :**
 
- - Nous avons au préalable installer un `VPC access connecteur` pour que vos fonctions puissent s'intégrer à un VPC.
+- Nous avons au préalable installer un `VPC access connecteur` pour que vos fonctions puissent s'intégrer à un VPC.
 
 > Pour plus de [documentation](https://cloud.google.com/vpc/docs/serverless-vpc-access)
 
