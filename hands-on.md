@@ -70,7 +70,7 @@ A propos de cette commande  `gcloud functions deploy`:
 
 ### Vérification de la Cloud Function
 
-Dans la console, consultez sur la liste des fonctions: [](https://console.cloud.google.com/functions/list)
+Dans la console, consultez sur la liste des Cloud Functions [](https://console.cloud.google.com/functions/list)
 et sélectionnez votre fonction `{MY_ID}-pubsub-function`. Vous verrez notamment :
 
 - Les métriques
@@ -196,6 +196,7 @@ Cette URL a un format particulier qui dépend du projet GCP, de la région et du
 ```bash
 echo $URL_SIMPLE_HTTP
 ```
+
 Testons votre fonction par un simple appel `curl` :
 
 ```bash
@@ -258,6 +259,8 @@ Et avec `curl`, vous utilisez cette commande :
 ```bash
 curl -H "Authorization: bearer ${MY_TOKEN}"  "${URL_SIMPLE_HTTP}?name=blabla"
 ```
+
+Vous devriez avoir en retour `Hello blabla`
 
 ### Info +
 
