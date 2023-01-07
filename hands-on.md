@@ -177,7 +177,7 @@ A propos de cette commande  `gcloud functions deploy`:
 
 ### Vérification de la Cloud Function
 
-Dans la console, consultez sur la liste des [Cloud Functions](https://console.cloud.google.com/functions/list)
+Dans la console, consultez sur la liste des Cloud Functions [](https://console.cloud.google.com/functions/list)
 et sélectionnez votre fonction `{MY_ID}-simple-http`. Vous verrez notamment :
 
 - Les métriques
