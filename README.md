@@ -1,18 +1,18 @@
 # cloud-function-hands-on
 Cloud function Hands-on tutorial
 
-## Démarrage: 
-Pour démarrer le hands-on, 2 solutions: 
-- Cliquer sur le lien ci dessous:  
+## Démarrage:
+Le hands-on va se jouer dans cloud-shell, pour le démarrer:
+ * Se connecter sur la console GCP avec le projet **cloud-function-hands-on** selectionné en cliquant [ici](https://console.cloud.google.com?project=cloud-function-hands-on).
+ * Attention si vous ne voyez pas le projet c'est que vous n'êtes pas connecté avec votre compte **Wescale**, dans ce cas changer le en cliquant sur votre compte en haut à droite et en changeant le profil utilisé.
+ * Activer Cloud Shell:
+   [![](https://thunder-ctf.cloud/img/index/cloudshell.png)]
+ * Démarrer le hands-on :
 
-[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/ibeauvais/cloud-function-hands-on&cloudshell_tutorial=hands-on.md)  
-  
-
-- Lancer cloud shell dans votre console GCP puis: 
 ```bash
 git clone https://github.com/ibeauvais/cloud-function-hands-on
 cd cloud-function-hands-on
 cloudshell launch-tutorial hands-on.md
 ```
 
-:warning: Attention d'être bien avec son compte mail Wescale si vous avez plusieurs compte gmail
+
