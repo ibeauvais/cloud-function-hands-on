@@ -2,3 +2,6 @@
 .direnv/
 .envrc
 .python-version
+
+draft/
+
