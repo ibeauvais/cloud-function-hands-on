@@ -2,4 +2,5 @@
 .direnv/
 .envrc
 .python-version
+draft/
 .terraform.lock.hcl
