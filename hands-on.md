@@ -4,7 +4,7 @@
 ## Prérequis
 
 - Vous aurez besoin de votre compte Google WeScale
-- Configurer le projet GCP `cloud-function-hands-on` par défaut. Vous allez l'utiliser pour déployer les fonctions.
+- Configurer le projet GCP `cloud-function-hands-on` par défaut. Vous allez l'utiliser pour déployer les fonctions:
 
 ```bash
 gcloud config set project cloud-function-hands-on
@@ -66,8 +66,9 @@ gcloud functions deploy "${MY_ID}-pubsub-function" --region=europe-west1 \
 ### Info +
 A propos de cette commande  `gcloud functions deploy`:
 - Le paramètre `entry-point` permet de spécifier la méthode qui traitera le message dans `main.py`.
-- Une image docker a été construite avec [Google Cloud's buildpacks](https://cloud.google.com/docs/buildpacks/build-function)
-- Cette construction est réalisée par le service [Cloud Build](https://cloud.google.com/build)
+- Derrière la scène **Cloud Function** s'appuie sur d'autres services managés:
+  - Une image docker a été construite avec [Google Cloud's buildpacks](https://cloud.google.com/docs/buildpacks/build-function)
+  - Cette construction est réalisée par le service [Cloud Build](https://cloud.google.com/build)
 
 ### Vérification de la Cloud Function
 
@@ -400,11 +401,13 @@ gcloud functions deploy "${MY_ID}-redis-function" --region=europe-west1 \
 
 ### Test de la Cloud Function
 
-Comme vu précédemment, récupérez l'URL de déclenchement par un appel API, mais le format à changer :
+Comme vu précédemment, récupérez l'URL de déclenchement par un appel API, mais le format a changé:
 
 ```bash
 export URL_REDIS_HTTP=$(gcloud functions describe "${MY_ID}-redis-function" --region=europe-west1 --format="value(serviceConfig.uri)")
+echo $URL_REDIS_HTTP
 ```
+En effet, **Cloud Function Gen2** est déployé sur [Cloud Run](https://cloud.google.com/run/docs), c'est donc une URL **Cloud Run**.
 
 ```bash
 curl -H "Authorization: bearer ${MY_TOKEN}"  "${URL_REDIS_HTTP}?id=${MY_ID}"
@@ -421,8 +424,8 @@ REDIS_CLIENT = redis.Redis(host="my_redis_server",
                            password="my_redis_password")
 ```
 
-Effectivement, vous devez récupérer les informations `host`, `port` et `password` via la fonctionnalité **GCP secret manager** ou
-en tant que variable d'environnement instanciée directement.
+Effectivement, vous devez récupérer les informations `host`, `port` et `password`.
+Le `host`et `password` ont été au préalable stocké dans des secrets dans **GCP secret manager** et le `port` peut être configuré via une variable d'environnement simple.
 
 ### Intégration des secrets et des variables d'environnement.
 
@@ -477,6 +480,7 @@ qu'elle puisse communiquer avec des zones privées, donc le serveur **redis**.
 **Notes :**
 
 - Nous avons au préalable installer un `VPC access connecteur` pour que vos fonctions puissent s'intégrer à un VPC.
+- La configuration de se connecteur est disponible dans le [code terraform du hands-on](https://github.com/ibeauvais/cloud-function-hands-on/blob/main/infra/vpc.tf):
 
 > Pour plus de [documentation](https://cloud.google.com/vpc/docs/serverless-vpc-access)
 
@@ -498,6 +502,8 @@ curl -H "Authorization: bearer ${MY_TOKEN}"  "${URL_REDIS_HTTP}?id=${MY_ID}"
 Maintenant vous obtenez un `secret`, que se passe-t-il si vous interrogez de nouveau le redis avec ce `secret` ?...
 
 ## Fin de l'aventure !
+
+<walkthrough-conclusion-trophy></walkthrough-conclusion-trophy>
 
 Mais beaucoup d'autres choses restent à découvrir...
 Merci pour votre participation et rejoignons-nous pour les mots de la fin.
