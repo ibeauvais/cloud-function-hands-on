@@ -17,7 +17,7 @@ Vous l'utiliserez lors de vos déploiements de function dans le projet `cloud-fu
 Définissez votre `ID` (**alphanumérique en minuscule**) de projet dans votre environnement :
 
 ```bash
-export MY_ID=$(echo "xxxx" | tr '[:upper:]' '[:lower:]')
+export MY_ID=$(echo "my_lowercase_id" | tr '[:upper:]' '[:lower:]')
 ```
 
 - Veuillez inscrire votre `ID` sur ce [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1abBw26Bo_2IflzBB3QFtEVn4fcqFhpqQtSjMgC95y6U/edit?usp=sharing)
@@ -174,7 +174,7 @@ gcloud functions deploy "${MY_ID}-simple-http" --region=europe-west1 \
 ### Info +
 A propos de cette commande  `gcloud functions deploy`:
 
-- Le paramètre `trigger-http` permet de spécifier le type d'appel envoyé à la Cloud Function.
+- Le paramètre `trigger-http` permet de spécifier le type de déclencheur utilisé par la Cloud Function.
 - Le paramètre `allow-unauthenticated` permet une utilisation publique de la Cloud Function, sans authentification au préalable.
 
 ### Vérification de la Cloud Function
@@ -224,7 +224,7 @@ gcloud functions remove-iam-policy-binding "${MY_ID}-simple-http" --region=europ
 
 **Notes :**
 
-La propagation de cette modification peut prendre jusqu'à 30 secondes. D'où le `& sleep 30` à la fin de cette commande. 🙈🙉🙊
+La propagation de cette modification peut prendre jusqu'à 30 secondes. D'où le `& sleep 30` à la fin de cette commande. 🙈🙉🙊 Cela peut être +? Armez vous de patience pour la vérification suivante.
 
 ### Vérification de la suppression du droit
 
