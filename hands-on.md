@@ -228,7 +228,7 @@ La propagation de cette modification peut prendre jusqu'à 30 secondes. D'où le
 
 ### Vérification de la suppression du droit
 
-Appelez votre fonction aec un simple appel `curl` :
+Appelez votre fonction avec un simple appel `curl` :
 
 ```bash
 curl "${URL_SIMPLE_HTTP}?name=blabla"
