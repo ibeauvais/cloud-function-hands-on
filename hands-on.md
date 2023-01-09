@@ -219,12 +219,12 @@ Vous allez voir comment sécuriser l'appel à cette Cloud Function.
 Supprimez le droit donné à tous le monde d'invoquer la fonction :
 
 ```bash
-gcloud functions remove-iam-policy-binding "${MY_ID}-simple-http" --region=europe-west1 --member=allUsers --role=roles/cloudfunctions.invoker & sleep 30
+gcloud functions remove-iam-policy-binding "${MY_ID}-simple-http" --region=europe-west1 --member=allUsers --role=roles/cloudfunctions.invoker && sleep 30
 ```
 
 **Notes :**
 
-La propagation de cette modification peut prendre jusqu'à 30 secondes. D'où le `& sleep 30` à la fin de cette commande. 🙈🙉🙊 Cela peut être +? Armez vous de patience pour la vérification suivante.
+La propagation de cette modification peut prendre jusqu'à 30 secondes. D'où le `&& sleep 30` à la fin de cette commande. 🙈🙉🙊 Cela peut être +? Armez vous de patience pour la vérification suivante.
 
 ### Vérification de la suppression du droit
 
