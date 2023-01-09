@@ -499,7 +499,7 @@ Refaite un test avec la commande `curl` :
 curl -H "Authorization: bearer ${MY_TOKEN}"  "${URL_REDIS_HTTP}?id=${MY_ID}"
 ```
 
-Maintenant vous obtenez un `secret`, que se passe-t-il si vous interrogez de nouveau le redis avec ce `secret` ?...
+Maintenant vous obtenez un `secret`, que se passe-t-il si vous interrogez de nouveau le redis avec ce `secret` en tant que `id`?...
 
 ## Fin de l'aventure !
 
