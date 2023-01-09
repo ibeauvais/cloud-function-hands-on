@@ -425,7 +425,7 @@ REDIS_CLIENT = redis.Redis(host="my_redis_server",
 ```
 
 Effectivement, vous devez récupérer les informations `host`, `port` et `password`.
-Le `host`et `password` ont été au préalable stocké dans des secrets dans **GCP secret manager** et le `port` peut être configuré via une variable d'environnement simple.
+Le `host`et `password` ont été au préalable stockés dans des secrets dans **GCP secret manager** et le `port` peut être configuré via une variable d'environnement simple.
 
 ### Intégration des secrets et des variables d'environnement.
 
@@ -480,7 +480,7 @@ qu'elle puisse communiquer avec des zones privées, donc le serveur **redis**.
 **Notes :**
 
 - Nous avons au préalable installer un `VPC access connecteur` pour que vos fonctions puissent s'intégrer à un VPC.
-- La configuration de se connecteur est disponible dans le [code terraform du hands-on](https://github.com/ibeauvais/cloud-function-hands-on/blob/main/infra/vpc.tf):
+- La configuration de ce connecteur est disponible dans le [code terraform du hands-on](https://github.com/ibeauvais/cloud-function-hands-on/blob/main/infra/vpc.tf):
 
 > Pour plus de [documentation](https://cloud.google.com/vpc/docs/serverless-vpc-access)
 
