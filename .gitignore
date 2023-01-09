@@ -2,5 +2,6 @@
 .direnv/
 .envrc
 .python-version
+.idea/
+.gcloudignore
 draft/
-.terraform.lock.hcl

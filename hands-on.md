@@ -12,7 +12,7 @@ gcloud config set project cloud-function-hands-on
 
 - Notez que l'ensemble du code que vous manipulerez se trouvera dans `functions/`
 - Pour faciliter le hands-on, merci de choisir un `ID` alphanumérique.
-  Vous l'utiliserez lors de vos déploiements de function dans le projet `cloud-function-hands-on` afin d'avoir un nom unique
+Vous l'utiliserez lors de vos déploiements de function dans le projet `cloud-function-hands-on` afin d'avoir un nom unique
 
 Définissez votre `ID` (**alphanumérique en minuscule**) de projet dans votre environnement :
 
@@ -20,6 +20,7 @@ Définissez votre `ID` (**alphanumérique en minuscule**) de projet dans votre e
 export MY_ID=$(echo "xxxx" | tr '[:upper:]' '[:lower:]')
 ```
 
+- Veuillez inscrire votre `ID` sur ce [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1abBw26Bo_2IflzBB3QFtEVn4fcqFhpqQtSjMgC95y6U/edit?usp=sharing)
 
 ## Cloud Function Pub/Sub
 
@@ -71,7 +72,7 @@ A propos de cette commande  `gcloud functions deploy`:
 
 ### Vérification de la Cloud Function
 
-Dans la console, consultez sur la liste des fonctions: [](https://console.cloud.google.com/functions/list)
+Dans la console, consultez sur la liste des Cloud Functions [](https://console.cloud.google.com/functions/list)
 et sélectionnez votre fonction `{MY_ID}-pubsub-function`. Vous verrez notamment :
 
 - Les métriques
@@ -197,6 +198,7 @@ Cette URL a un format particulier qui dépend du projet GCP, de la région et du
 ```bash
 echo $URL_SIMPLE_HTTP
 ```
+
 Testons votre fonction par un simple appel `curl` :
 
 ```bash
@@ -260,6 +262,8 @@ Et avec `curl`, vous utilisez cette commande :
 curl -H "Authorization: bearer ${MY_TOKEN}"  "${URL_SIMPLE_HTTP}?name=blabla"
 ```
 
+Vous devriez avoir en retour `Hello blabla`
+
 ### Info +
 
 - Ce token d'authentification a une durée de validité de 1H
@@ -315,20 +319,20 @@ Response(response="My message", status=201) # 201 HTTP status code 'Created'
 from flask import Response
 
 def handle_request(request):
-  if request.method == 'GET':
-    return Response(response="OK, method GET", status=200)
+    if request.method == 'GET':
+        return Response(response="OK, method GET", status=200)
 ```
 
 ```python
 def handle_request(request):
-  payload_json:dict=request.get_json()
-  return payload_json["names"]
+    payload_json:dict=request.get_json()
+    return payload_json["names"]
 ```
 
 ```python
 def handle_request(request):
-  if request.method not in ('GET', 'POST'):
-    print("Not Good")
+    if request.method not in ('GET', 'POST'):
+        print("Not Good")
 ```
 
 **Important :**
@@ -495,7 +499,7 @@ Refaite un test avec la commande `curl` :
 curl -H "Authorization: bearer ${MY_TOKEN}"  "${URL_REDIS_HTTP}?id=${MY_ID}"
 ```
 
-Maintenant vous obtenez un `secret`, que se passe-t-il si vous interrogez de nouveau le redis avec ce `secret` ?...
+Maintenant vous obtenez un `secret`, que se passe-t-il si vous interrogez de nouveau le redis avec ce `secret` en tant que `id`?...
 
 ## Fin de l'aventure !
 
